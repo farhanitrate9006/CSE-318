@@ -49,4 +49,9 @@ public class CSP
         return constraints[v.getPos().getRow()].holds(assignment)
                 && constraints[constraints.length / 2 + v.getPos().getCol()].holds(assignment);
     }
+
+    public int forwardDegree(Variable v, HashMap<Variable, Integer> assignment) {
+        return constraints[v.getPos().getRow()].forwardDegree(assignment)
+                + constraints[constraints.length / 2 + v.getPos().getCol()].forwardDegree(assignment);
+    }
 }

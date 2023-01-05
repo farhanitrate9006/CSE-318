@@ -38,4 +38,13 @@ public class Constraint
 
         return true;
     }
+
+    public int forwardDegree(HashMap<Variable, Integer> assignment)
+    {
+        int degree = 0;
+        for(Variable v : scope)
+        if(assignment.get(v) == 0)
+            degree++;
+        return degree;
+    }
 }
