@@ -7,6 +7,7 @@ public class Variable
 {
     private Position pos;
     private ArrayList<Integer> domain;
+    public ArrayList<Variable> affectedNeighbours;
 
     public Variable(int row, int col, int maxVal)
     {
@@ -23,9 +24,9 @@ public class Variable
         System.out.println(domain);
     }
 
-    public void addValue(int i) { domain.add(i); }
+    public void addValue(int val) { domain.add(val); }
 
-    public void removeValue(int i) { domain.remove(Integer.valueOf(i)); }
+    public void removeValue(int val) { domain.remove(Integer.valueOf(val)); }
 
     public int getDomainSize() { return domain.size(); }
 
@@ -40,6 +41,8 @@ public class Variable
     }
 
     public Position getPos() { return pos; }
+
+
 
     @Override
     public boolean equals(Object o) {

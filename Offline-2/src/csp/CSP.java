@@ -49,13 +49,9 @@ public class CSP {
                 + constraints[constraints.length / 2 + v.getPos().getCol()].forwardDegree(assignment);
     }
 
-    /*
-    public ArrayList<Variable> getNeighbours(Variable v) {
+    public ArrayList<Variable> getRowNeighbours(Variable v) { return constraints[v.getPos().getRow()].getScope(); }
 
-        constraints[v.getPos().getRow()].getNeighbours().addAll(
-                constraints[constraints.length / 2 + v.getPos().getCol()].getNeighbours());
-        return
+    public ArrayList<Variable> getColNeighbours(Variable v) {
+        return constraints[constraints.length / 2 + v.getPos().getCol()].getScope();
     }
-
-     */
 }

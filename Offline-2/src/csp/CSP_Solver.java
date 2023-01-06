@@ -11,6 +11,7 @@ public class CSP_Solver
     private Variable_Order_Heuristic voh;
     private CSP csp;
     private HashMap<Variable, Integer> assignment;
+    //private ArrayList<Variable> affectedNeighbours;
     public static long backtracks = 0;
 
     public CSP_Solver(int boardSize, boolean forwardChecking, int heuristicChoice, CSP csp, HashMap<Variable, Integer> assignment)
@@ -28,7 +29,6 @@ public class CSP_Solver
             return true;
 
         //System.out.println("hello");
-
         Variable var = voh.getNextVariable();
         //System.out.println("var: " + var.getPos().getRow() + " " + var.getPos().getCol());
         ArrayList<Integer> prevDomain = (ArrayList<Integer>) var.getDomain().clone();
@@ -49,19 +49,22 @@ public class CSP_Solver
             assignment.put(var, val);
             if(csp.satisfyConstraints(var, assignment))
             {
-                //if(forwardChecking);
-
-                if(solve())
+                boolean neighboursOkay = handleNeighbours(var, val);
+                if(!forwardChecking || neighboursOkay)
                 {
-                    //System.out.println("here 0.5");
-                    break;
+                    if(solve())
+                    {
+                        //System.out.println("here 0.5");
+                        break;
+                    }
+                    else
+                    {
+                        //System.out.println("here 1");
+                        handleVar(var, val);
+                        for(Variable v : var.affectedNeighbours)
+                            v.addValue(val);
+                    }
                 }
-                else
-                {
-                    //System.out.println("here 1");
-                    handleVar(var, val);
-                }
-
             }
             else
             {
@@ -71,6 +74,60 @@ public class CSP_Solver
         }
 
         //System.out.println("here 3");
+        return true;
+    }
+
+    private boolean handleNeighbours(Variable var, int val)
+    {
+        ArrayList<Variable> rowNeighbours = csp.getRowNeighbours(var);
+        ArrayList<Variable> colNeighbours = csp.getColNeighbours(var);
+        var.affectedNeighbours = new ArrayList<>();
+        boolean failure = false;
+
+        for(Variable v : rowNeighbours)
+        {
+            if(v != var && v.getDomain().contains(val))
+            {
+                v.removeValue(val);
+                var.affectedNeighbours.add(v);
+                if(forwardChecking && v.getDomainSize() == 0)
+                {
+                    failure = true;
+                    break;
+                }
+            }
+        }
+
+        if(failure)
+        {
+            for(Variable v : var.affectedNeighbours)
+                v.addValue(val);
+            handleVar(var, val);
+            return false;
+        }
+
+        for(Variable v : colNeighbours)
+        {
+            if(v != var && v.getDomain().contains(val))
+            {
+                v.removeValue(val);
+                var.affectedNeighbours.add(v);
+                if(forwardChecking && v.getDomainSize() == 0)
+                {
+                    failure = true;
+                    break;
+                }
+            }
+        }
+
+        if(failure)
+        {
+            for(Variable v : var.affectedNeighbours)
+                v.addValue(val);
+            handleVar(var, val);
+            return false;
+        }
+
         return true;
     }
 

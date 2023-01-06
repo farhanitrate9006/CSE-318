@@ -7,9 +7,10 @@ public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
-        int heuristicType = 4;
-        int initialNonEmpty = 0;
+        final int heuristicType = 1;
+        final boolean forwardChecking = true;
 
+        int initialNonEmpty = 0;
         int N = sc.nextInt();
         CSP csp = new CSP(N);
         HashMap<Position, Integer> givenVariables = new HashMap<>();
@@ -47,7 +48,7 @@ public class Main {
         //System.out.println("size: " + assignment.size());
 
         long start = System.nanoTime();
-        new CSP_Solver(N, false, heuristicType, csp, assignment).solve();
+        new CSP_Solver(N, forwardChecking, heuristicType, csp, assignment).solve();
         for(Variable v : assignment.keySet())
         {
             //System.out.println(v.getPos().getRow() + " " + v.getPos().getCol() + " " + assignment.get(v));
@@ -55,11 +56,13 @@ public class Main {
         }
         long end = System.nanoTime();
         long time = (long) ((end-start) * Math.pow(10, -6));
-        System.out.println("Time: " + time + " ms");
+
         long backtracks = CSP_Solver.backtracks;
-        long nodes = backtracks + initialNonEmpty;
-        System.out.println("#BT: " + backtracks);
+        long nodes = backtracks + initialNonEmpty + 1;
+
         System.out.println("#Nodes: " + nodes);
+        System.out.println("#BT: " + backtracks);
+        System.out.println("Time: " + time + " ms");
 
         //System.out.println("Solution");
         for(int i=0; i<N; i++)
