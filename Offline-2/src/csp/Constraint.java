@@ -47,4 +47,6 @@ public class Constraint
             degree++;
         return degree;
     }
+
+    public ArrayList<Variable> getNeighbours() { return (ArrayList<Variable>) scope.clone(); }
 }
