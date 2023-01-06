@@ -49,4 +49,33 @@ public class Constraint
     }
 
     public ArrayList<Variable> getScope() { return scope; }
+
+    public boolean checkNeighbours(boolean forwardChecking, Variable var, int val)
+    {
+        boolean failure = false;
+
+        for(Variable v : scope)
+        {
+            if(v != var && v.getDomain().contains(val))
+            {
+                v.removeValue(val);
+                var.affectedNeighbours.add(v);
+                if(forwardChecking && v.getDomainSize() == 0)
+                {
+                    failure = true;
+                    break;
+                }
+            }
+        }
+
+        if(failure)
+        {
+            for(Variable v : var.affectedNeighbours)
+                v.addValue(val);
+            //handleVar(var, val);
+            return false;
+        }
+
+        return true;
+    }
 }

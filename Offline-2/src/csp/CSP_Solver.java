@@ -49,7 +49,9 @@ public class CSP_Solver
             assignment.put(var, val);
             if(csp.satisfyConstraints(var, assignment))
             {
-                boolean neighboursOkay = handleNeighbours(var, val);
+                boolean neighboursOkay = csp.checkNeighbours(forwardChecking, var, val);
+                if(!neighboursOkay)
+                    handleVar(var, val);
                 if(!forwardChecking || neighboursOkay)
                 {
                     if(solve())
@@ -74,60 +76,6 @@ public class CSP_Solver
         }
 
         //System.out.println("here 3");
-        return true;
-    }
-
-    private boolean handleNeighbours(Variable var, int val)
-    {
-        ArrayList<Variable> rowNeighbours = csp.getRowNeighbours(var);
-        ArrayList<Variable> colNeighbours = csp.getColNeighbours(var);
-        var.affectedNeighbours = new ArrayList<>();
-        boolean failure = false;
-
-        for(Variable v : rowNeighbours)
-        {
-            if(v != var && v.getDomain().contains(val))
-            {
-                v.removeValue(val);
-                var.affectedNeighbours.add(v);
-                if(forwardChecking && v.getDomainSize() == 0)
-                {
-                    failure = true;
-                    break;
-                }
-            }
-        }
-
-        if(failure)
-        {
-            for(Variable v : var.affectedNeighbours)
-                v.addValue(val);
-            handleVar(var, val);
-            return false;
-        }
-
-        for(Variable v : colNeighbours)
-        {
-            if(v != var && v.getDomain().contains(val))
-            {
-                v.removeValue(val);
-                var.affectedNeighbours.add(v);
-                if(forwardChecking && v.getDomainSize() == 0)
-                {
-                    failure = true;
-                    break;
-                }
-            }
-        }
-
-        if(failure)
-        {
-            for(Variable v : var.affectedNeighbours)
-                v.addValue(val);
-            handleVar(var, val);
-            return false;
-        }
-
         return true;
     }
 

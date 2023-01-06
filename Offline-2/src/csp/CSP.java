@@ -54,4 +54,11 @@ public class CSP {
     public ArrayList<Variable> getColNeighbours(Variable v) {
         return constraints[constraints.length / 2 + v.getPos().getCol()].getScope();
     }
+
+    public boolean checkNeighbours(boolean forwardChecking, Variable v, int val)
+    {
+        v.affectedNeighbours = new ArrayList<>();
+        return constraints[v.getPos().getRow()].checkNeighbours(forwardChecking, v, val)
+                && constraints[constraints.length / 2 + v.getPos().getCol()].checkNeighbours(forwardChecking, v, val);
+    }
 }
