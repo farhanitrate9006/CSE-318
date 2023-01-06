@@ -94,11 +94,21 @@ public class CSP_Solver
         return true;
     }
 
-    private int getNextVal(Variable v)
+    private int getNextVal(Variable var)
     {
-        int size = v.getDomainSize();
-        if(size > 0)
-            return v.getDomainValue(new Random().nextInt(size));
-        return 0;
+        int minClash = Integer.MAX_VALUE;
+        int selectedVal = 0;
+
+        for(int val : var.getDomain())
+        {
+            int clashesForVal = csp.clashes(var, val);
+            if(clashesForVal < minClash)
+            {
+                minClash = clashesForVal;
+                selectedVal = val;
+            }
+        }
+
+        return selectedVal;
     }
 }

@@ -7,7 +7,7 @@ public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
-        final int heuristicType = 1;
+        final int heuristicType = 5;
         final boolean forwardChecking = true;
 
         int initialNonEmpty = 0;

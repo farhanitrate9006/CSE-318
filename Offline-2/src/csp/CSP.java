@@ -49,16 +49,15 @@ public class CSP {
                 + constraints[constraints.length / 2 + v.getPos().getCol()].forwardDegree(assignment);
     }
 
-    public ArrayList<Variable> getRowNeighbours(Variable v) { return constraints[v.getPos().getRow()].getScope(); }
-
-    public ArrayList<Variable> getColNeighbours(Variable v) {
-        return constraints[constraints.length / 2 + v.getPos().getCol()].getScope();
+    public boolean checkNeighbours(boolean forwardChecking, Variable var, int val)
+    {
+        var.affectedNeighbours = new ArrayList<>();
+        return constraints[var.getPos().getRow()].checkNeighbours(forwardChecking, var, val)
+                && constraints[constraints.length / 2 + var.getPos().getCol()].checkNeighbours(forwardChecking, var, val);
     }
 
-    public boolean checkNeighbours(boolean forwardChecking, Variable v, int val)
-    {
-        v.affectedNeighbours = new ArrayList<>();
-        return constraints[v.getPos().getRow()].checkNeighbours(forwardChecking, v, val)
-                && constraints[constraints.length / 2 + v.getPos().getCol()].checkNeighbours(forwardChecking, v, val);
+    public int clashes(Variable var, int val) {
+        return constraints[var.getPos().getRow()].clashes(var, val)
+                + constraints[constraints.length / 2 + var.getPos().getCol()].clashes(var, val);
     }
 }

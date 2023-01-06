@@ -50,6 +50,15 @@ public class Constraint
 
     public ArrayList<Variable> getScope() { return scope; }
 
+    public int clashes(Variable var, int val)
+    {
+        int clashCount = 0;
+        for(Variable v : scope)
+            if(v != var && v.getDomain().contains(val))
+                clashCount++;
+        return clashCount;
+    }
+
     public boolean checkNeighbours(boolean forwardChecking, Variable var, int val)
     {
         boolean failure = false;
