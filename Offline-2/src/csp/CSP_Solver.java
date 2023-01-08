@@ -6,13 +6,13 @@ import java.util.Random;
 
 public class CSP_Solver
 {
-    private int boardSize;
-    private boolean forwardChecking;
+    private final int boardSize;
+    private final boolean forwardChecking;
+    public static long backtracks = 0;
+
     private Variable_Order_Heuristic voh;
     private CSP csp;
     private HashMap<Variable, Integer> assignment;
-    //private ArrayList<Variable> affectedNeighbours;
-    public static long backtracks = 0;
 
     public CSP_Solver(int boardSize, boolean forwardChecking, int heuristicChoice, CSP csp, HashMap<Variable, Integer> assignment)
     {
@@ -28,64 +28,55 @@ public class CSP_Solver
         if(isAssignmentCompleted())
             return true;
 
-        //System.out.println("hello");
         Variable var = voh.getNextVariable();
-        //System.out.println("var: " + var.getPos().getRow() + " " + var.getPos().getCol());
+
+        // Saving previous value of domain. If this branch fails, domain will be needed to revert back
         ArrayList<Integer> prevDomain = (ArrayList<Integer>) var.getDomain().clone();
-        //System.out.println("outside loop");
 
         while(true)
         {
             int val = getNextVal(var);
-            //System.out.println("var: " + var.getPos().getRow() + " " + var.getPos().getCol() + " " + val);
-            if(val == 0)
+
+            if(val == 0) // Domain became null. Hence, invalid assignment... backtracking to parent
             {
-                //System.out.println("here 0");
                 var.setDomain(prevDomain);
                 backtracks++;
                 return false;
             }
 
             assignment.put(var, val);
-            if(csp.satisfyConstraints(var, assignment))
+            if(csp.satisfyConstraints(var, val, assignment))
             {
                 boolean neighboursOkay = csp.checkNeighbours(forwardChecking, var, val);
-                if(!neighboursOkay)
+                if(!neighboursOkay) // Neighbours are not okay with this particular value. Now, other values of domain need to be checked
                     handleVar(var, val);
                 if(!forwardChecking || neighboursOkay)
                 {
-                    if(solve())
-                    {
-                        //System.out.println("here 0.5");
+                    if(solve()) // Successful assignment. Hence, no need to check other values of domain
                         break;
-                    }
-                    else
+                    else // Branch failed at some point. Hence, invalid assignment. Taking necessary compensation
                     {
-                        //System.out.println("here 1");
                         handleVar(var, val);
                         for(Variable v : var.affectedNeighbours)
                             v.addValue(val);
                     }
                 }
             }
-            else
-            {
-                //System.out.println("here 2");
+            else // Does not satisfy constraints. Hence, invalid assignment
                 handleVar(var, val);
-            }
         }
 
-        //System.out.println("here 3");
         return true;
     }
 
+    // Necessary compensation for invalid assignment
     private void handleVar(Variable var, int val)
     {
-        var.removeValue(val);
+        var.removeValue(val); // This val leads to failure. Hence, removing it from domain
         assignment.put(var, 0);
-        //if(forwardChecking);
     }
 
+    // If any of the cell still contains zero, assignment is incomplete
     private boolean isAssignmentCompleted()
     {
         for(int i : assignment.values())
@@ -94,6 +85,8 @@ public class CSP_Solver
         return true;
     }
 
+    // least-constraining-value heuristic has been applied
+    // the value which makes the minimum clashes with other variables domain, will be selected
     private int getNextVal(Variable var)
     {
         int minClash = Integer.MAX_VALUE;

@@ -3,68 +3,75 @@ package csp;
 import java.util.HashMap;
 import java.util.Scanner;
 
-public class Main {
-    public static void main(String[] args) {
+public class Main
+{
+    public static void main(String[] args)
+    {
         Scanner sc = new Scanner(System.in);
 
-        final int heuristicType = 5;
+        // variables which decides heuristic type & solve method
+        final int heuristicType = 1;
         final boolean forwardChecking = true;
 
-        int initialNonEmpty = 0;
-        int N = sc.nextInt();
+        int initialNonEmpty = 0; // non-zero cells of board in given input
+        int N = sc.nextInt(); // board dimension
+
+        // instantiating necessary objects
         CSP csp = new CSP(N);
         HashMap<Position, Integer> givenVariables = new HashMap<>();
         HashMap<Variable, Integer> assignment = new HashMap<>();
         int[][] solution = new int[N][N];
 
+        // input taking & processing in nested loop
         for(int i=0; i<N; i++)
         {
             for(int j=0; j<N; j++)
             {
-                int cellVal = sc.nextInt();
+                int cellVal = sc.nextInt(); // value for a particular cell
                 if(cellVal == 0)
                 {
-                    Variable v = new Variable(i, j, N);
-                    csp.addVariable(v);
-                    csp.modifyConstraints(i, v);
-                    csp.modifyConstraints(N+j, v);
-                    assignment.put(v, 0);
                     initialNonEmpty++;
+                    Variable var = new Variable(i, j, N); // each empty cell will be represented one variable
+                    csp.addVariable(var);
+                    assignment.put(var, 0); // variable currently contains 0
+
+                    // each cell belongs to one row and one col
+                    // each row/col is represented one constraint object
+                    // hence each variable will belong to two constraint objects
+                    csp.modifyConstraints(i, var);
+                    csp.modifyConstraints(N+j, var);
                 }
                 else {
-                    givenVariables.put(new Position(i, j), cellVal);
+                    givenVariables.put(new Position(i, j), cellVal); // this list will be used to prune domains of empty cells
                     solution[i][j] = cellVal;
                 }
             }
         }
 
-        //csp.checkVarDom();
-
-        for(Position pos : givenVariables.keySet()) {
-            //System.out.println("mao");
+        // domain pruning of empty cells
+        for(Position pos : givenVariables.keySet())
             csp.modifyVariableDomain(pos, givenVariables.get(pos));
-        }
 
-        //System.out.println("size: " + assignment.size());
-
+        // ### Solution begins ### //
         long start = System.nanoTime();
         new CSP_Solver(N, forwardChecking, heuristicType, csp, assignment).solve();
+
+        // filling board
         for(Variable v : assignment.keySet())
-        {
-            //System.out.println(v.getPos().getRow() + " " + v.getPos().getCol() + " " + assignment.get(v));
             solution[v.getPos().getRow()][v.getPos().getCol()] = assignment.get(v);
-        }
+
         long end = System.nanoTime();
         long time = (long) ((end-start) * Math.pow(10, -6));
+        // ### Solution ends ### //
 
+        // printing logs
         long backtracks = CSP_Solver.backtracks;
         long nodes = backtracks + initialNonEmpty + 1;
-
         System.out.println("#Nodes: " + nodes);
         System.out.println("#BT: " + backtracks);
         System.out.println("Time: " + time + " ms");
 
-        //System.out.println("Solution");
+        // printing solution
         for(int i=0; i<N; i++)
         {
             for(int j = 0; j < N; j++)

@@ -1,13 +1,14 @@
 package csp;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
+// this class either represents a row or a col
+// it will check value consistency (no value shall be duplicated) in that particular row/col
 public class Constraint
 {
-    private int boardSize;
-    private ArrayList<Variable> scope;
+    private final int boardSize;
+    private ArrayList<Variable> scope; // variables of that row/col
 
     public Constraint(int boardSize)
     {
@@ -19,26 +20,25 @@ public class Constraint
         scope.add(v);
     }
 
-    public boolean holds(HashMap<Variable, Integer> assignment)
+    public boolean holds(int val, HashMap<Variable, Integer> assignment)
     {
-        Boolean[] check = new Boolean[boardSize + 1];
-        Arrays.fill(check, Boolean.FALSE);
-
-        for(Variable v : assignment.keySet())
+        int existCount = 0;
+        for(Variable v : scope)
         {
-            if(scope.contains(v))
+            if(assignment.get(v) == val)
             {
-                int cellVal = assignment.get(v);
-                //System.out.println(v.getPos().getRow() + " " + v.getPos().getCol() + " " + cellVal);
-                if(cellVal != 0 && check[cellVal])
-                    return false;
-                check[cellVal] = true;
+                if(existCount == 1) // value found twice in that row/col
+                {
+                    existCount++;
+                    break;
+                }
+                existCount++;
             }
         }
-
-        return true;
+        return existCount == 1;
     }
 
+    // required for vah-2
     public int forwardDegree(HashMap<Variable, Integer> assignment)
     {
         int degree = 0;
@@ -48,8 +48,7 @@ public class Constraint
         return degree;
     }
 
-    public ArrayList<Variable> getScope() { return scope; }
-
+    // required for value-ordering-heuristic
     public int clashes(Variable var, int val)
     {
         int clashCount = 0;
@@ -81,7 +80,6 @@ public class Constraint
         {
             for(Variable v : var.affectedNeighbours)
                 v.addValue(val);
-            //handleVar(var, val);
             return false;
         }
 
