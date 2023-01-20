@@ -20,6 +20,14 @@ public class Course
         adjacentCourses.add(course);
     }
 
+    public int getDegree() { return adjacentCourses.size(); }
+
+    public void increaseDegree() { this.saturationDegree++; }
+
+    public int getSaturationDegree() { return saturationDegree; }
+
+    public int getTotalEnrolled() { return totalEnrolled; }
+
     @Override
     public String toString() {
         return courseId + " " + String.valueOf(totalEnrolled);
