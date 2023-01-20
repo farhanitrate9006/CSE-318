@@ -28,8 +28,6 @@ public class Main
             processStudentFile(FILE_TO_PROCESS);
             Solver solver = new Solver(courses, students);
             solver.solveByLargestDegree();
-            //for(Course course : courses)
-                //System.out.print(course.getTimeSlot() + " ");
             solver.solveByLargestEnrollment();
             solver.solveByRandomOrdering();
             courses.clear();
@@ -81,23 +79,23 @@ public class Main
 
 /*
 ===== car-f-92 =====
-For degree: 36
-For enrollment: 37
+For degree: 34
+For enrollment: 35
 For random: 42
 ===== car-s-91 =====
-For degree: 41
-For enrollment: 41
+For degree: 36
+For enrollment: 36
 For random: 48
 ===== kfu-s-93 =====
-For degree: 46
-For enrollment: 50
-For random: 65
+For degree: 21
+For enrollment: 21
+For random: 24
 ===== tre-s-92 =====
-For degree: 23
-For enrollment: 23
+For degree: 22
+For enrollment: 22
 For random: 28
 ===== yor-f-83 =====
 For degree: 24
 For enrollment: 23
-For random: 27
+For random: 28
 */

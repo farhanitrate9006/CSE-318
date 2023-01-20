@@ -5,7 +5,7 @@ import java.util.Comparator;
 
 public class EnrollmentComparator implements Comparator<Course> {
     @Override
-    public int compare(Course course1, Course course2) {
-        return course2.getTotalEnrolled() - course1.getTotalEnrolled();
+    public int compare(Course c1, Course c2) {
+        return c2.getTotalEnrolled() - c1.getTotalEnrolled();
     }
 }
