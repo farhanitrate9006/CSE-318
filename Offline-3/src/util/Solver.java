@@ -1,20 +1,17 @@
 package util;
 
 import entity.Course;
-import entity.Student;
 import java.util.ArrayList;
 
 public class Solver
 {
-    private ArrayList<Course> courses;
-    private ArrayList<Student> students;
-    private Heuristic heuristic;
+    private final ArrayList<Course> courses;
+    private final Heuristic heuristic;
     private final int heuristicType;
 
-    public Solver(int heuristicType, ArrayList<Course> courses, ArrayList<Student> students)
+    public Solver(int heuristicType, ArrayList<Course> courses)
     {
         this.courses = courses;
-        this.students = students;
         this.heuristicType = heuristicType;
         this.heuristic = new Heuristic(heuristicType, courses);
     }
@@ -23,22 +20,6 @@ public class Solver
     {
         for(Course course : courses)
             course.setTimeSlot(-1);
-    }
-
-    private double avgLinearPenalty()
-    {
-        int totalPenalty = 0;
-        for(Student student : students)
-            totalPenalty += student.linearPenalty();
-        return (totalPenalty * 1.0)/students.size();
-    }
-
-    private double avgExpPenalty()
-    {
-        int totalPenalty = 0;
-        for(Student student : students)
-            totalPenalty += student.expPenalty();
-        return (totalPenalty * 1.0)/students.size();
     }
 
     private int findSuitableSlot(Course course)

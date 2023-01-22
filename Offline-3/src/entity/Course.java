@@ -11,6 +11,7 @@ public class Course
     private int timeSlot;
     private ArrayList<Course> adjacentCourses;
     private HashSet<Integer> diffColoredNeighbours;
+    private int dfsStatus;
 
     public Course(String courseId, int totalEnrolled)
     {
@@ -20,6 +21,7 @@ public class Course
         this.timeSlot = -1;
         this.adjacentCourses = new ArrayList<>();
         this.diffColoredNeighbours = new HashSet<>();
+        this.dfsStatus = 0;
     }
 
     public void addAdjacent(Course course) {
@@ -46,6 +48,10 @@ public class Course
     public void addDiffColoredNeighbours(int timeSlot) { diffColoredNeighbours.add(timeSlot); }
 
     public int getSaturationDegree() { return diffColoredNeighbours.size(); }
+
+    public int getDfsStatus() { return dfsStatus; }
+
+    public void setDfsStatus(int dfsStatus) { this.dfsStatus = dfsStatus; }
 
     public int[] getAdjacentCourseSlots()
     {

@@ -2,6 +2,8 @@ package main;
 
 import entity.Course;
 import entity.Student;
+import util.PenaltyCalculator;
+import util.PenaltyReducer;
 import util.Solver;
 
 import java.io.File;
@@ -13,23 +15,40 @@ import java.util.Scanner;
 public class Main
 {
     private static final String PATH_TO_DATASET = "dataset";
-    private static ArrayList<Course> courses = new ArrayList<>();
-    private static ArrayList<Student> students = new ArrayList<>();
+    private static final int PENALTY_TYPE = 1;
+    private static final ArrayList<Course> courses = new ArrayList<>();
+    private static final ArrayList<Student> students = new ArrayList<>();
     private static final String[] FILE_NAMES = {"car-f-92", "car-s-91", "kfu-s-93", "tre-s-92", "yor-f-83"};
+    private static final String[] HEURISTICS = {"degree", "saturation degree", "enrollment", "random"};
 
     public static void main(String[] args) throws IOException
     {
-        for(int i=0; i<FILE_NAMES.length; i++)
+        for(int i=0; i<1; i++)
         {
             String FILE_TO_PROCESS = FILE_NAMES[i];
             System.out.println("===== " + FILE_TO_PROCESS + " =====");
+
             processCourseFile(FILE_TO_PROCESS);
             processStudentFile(FILE_TO_PROCESS);
+
+            PenaltyCalculator pc = new PenaltyCalculator(PENALTY_TYPE, students);
+            PenaltyReducer pr = new PenaltyReducer(courses, pc);
+
             //for(int j=2; j<3; j++)
             for(int j=1; j<5; j++)
             {
-                Solver solver = new Solver(j, courses, students);
-                System.out.println(solver.findTimeTable());
+                System.out.println("=== For " + HEURISTICS[j-1] + " ===");
+                System.out.println("Slots: " + new Solver(j, courses).findTimeTable());
+                System.out.printf("penalty: %.4f", pc.avgPenalty());
+                System.out.println();
+
+                pr.kempeChain();
+                System.out.printf("penalty after running kempe chain: %.4f", pc.avgPenalty());
+                System.out.println();
+
+                pr.pairSwap();
+                System.out.printf("penalty after running pair swap: %.4f", pc.avgPenalty());
+                System.out.println();;
                 //checkConflict();
             }
             courses.clear();
