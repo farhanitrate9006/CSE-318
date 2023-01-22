@@ -2,14 +2,15 @@ package entity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 
 public class Course
 {
-    private String courseId;
-    private int totalEnrolled;
-    private int saturationDegree;
+    private final String courseId;
+    private final int totalEnrolled;
     private int timeSlot;
     private ArrayList<Course> adjacentCourses;
+    private HashSet<Integer> diffColoredNeighbours;
 
     public Course(String courseId, int totalEnrolled)
     {
@@ -17,7 +18,8 @@ public class Course
         this.totalEnrolled = totalEnrolled;
 
         this.timeSlot = -1;
-        adjacentCourses = new ArrayList<>();
+        this.adjacentCourses = new ArrayList<>();
+        this.diffColoredNeighbours = new HashSet<>();
     }
 
     public void addAdjacent(Course course) {
@@ -26,15 +28,24 @@ public class Course
 
     public int getDegree() { return adjacentCourses.size(); }
 
-    public void increaseDegree() { this.saturationDegree++; }
-
-    public int getSaturationDegree() { return saturationDegree; }
+    public int getUnassignedNeighbourDegree()
+    {
+        int count = 0;
+        for(Course course : adjacentCourses)
+            if(course.timeSlot == -1)
+                count++;
+        return count;
+    }
 
     public int getTotalEnrolled() { return totalEnrolled; }
 
     public int getTimeSlot() { return timeSlot; }
 
     public void setTimeSlot(int timeSlot) { this.timeSlot = timeSlot; }
+
+    public void addDiffColoredNeighbours(int timeSlot) { diffColoredNeighbours.add(timeSlot); }
+
+    public int getSaturationDegree() { return diffColoredNeighbours.size(); }
 
     public int[] getAdjacentCourseSlots()
     {
@@ -43,6 +54,17 @@ public class Course
             slotOccupied[i] = adjacentCourses.get(i).timeSlot;
         Arrays.sort(slotOccupied);
         return slotOccupied;
+    }
+
+    public ArrayList<Course> getAdjacentCourses() { return adjacentCourses; }
+
+    public ArrayList<Course> getUnassignedAdjacent()
+    {
+        ArrayList<Course> listToReturn = new ArrayList<>();
+        for(Course course : adjacentCourses)
+            if(course.timeSlot == -1)
+                listToReturn.add(course);
+        return listToReturn;
     }
 
     @Override

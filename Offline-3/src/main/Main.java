@@ -2,7 +2,7 @@ package main;
 
 import entity.Course;
 import entity.Student;
-import solver.Solver;
+import util.Solver;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -20,16 +20,18 @@ public class Main
     public static void main(String[] args) throws IOException
     {
         for(int i=0; i<FILE_NAMES.length; i++)
-        //for(int i=2; i<3; i++)
         {
             String FILE_TO_PROCESS = FILE_NAMES[i];
             System.out.println("===== " + FILE_TO_PROCESS + " =====");
             processCourseFile(FILE_TO_PROCESS);
             processStudentFile(FILE_TO_PROCESS);
-            Solver solver = new Solver(courses, students);
-            solver.solveByLargestDegree();
-            solver.solveByLargestEnrollment();
-            solver.solveByRandomOrdering();
+            //for(int j=2; j<3; j++)
+            for(int j=1; j<5; j++)
+            {
+                Solver solver = new Solver(j, courses, students);
+                System.out.println(solver.findTimeTable());
+                //checkConflict();
+            }
             courses.clear();
             students.clear();
         }
@@ -75,27 +77,52 @@ public class Main
             students.add(student);
         }
     }
+
+    private static void checkConflict()
+    {
+        boolean flag = false;
+        for(Course course : courses)
+        {
+            ArrayList<Course> adjacent = course.getAdjacentCourses();
+            for(Course c : adjacent)
+            {
+                if(course.getTimeSlot() == c.getTimeSlot())
+                {
+                    flag = true;
+                    break;
+                }
+            }
+            if(flag)
+                break;
+        }
+        System.out.println(flag);
+    }
 }
 
 /*
 ===== car-f-92 =====
-For degree: 34
-For enrollment: 35
-For random: 42
+34
+28
+35
+43
 ===== car-s-91 =====
-For degree: 36
-For enrollment: 36
-For random: 48
+36
+31
+36
+47
 ===== kfu-s-93 =====
-For degree: 21
-For enrollment: 21
-For random: 24
+21
+20
+21
+27
 ===== tre-s-92 =====
-For degree: 22
-For enrollment: 22
-For random: 28
+22
+21
+22
+29
 ===== yor-f-83 =====
-For degree: 24
-For enrollment: 23
-For random: 28
+24
+22
+23
+27
 */
