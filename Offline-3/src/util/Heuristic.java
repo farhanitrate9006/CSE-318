@@ -2,12 +2,10 @@ package util;
 
 import comparator.DegreeComparator;
 import comparator.EnrollmentComparator;
-import comparator.SaturationDegreeComparator;
 import entity.Course;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.PriorityQueue;
 import java.util.Random;
 
 public class Heuristic
