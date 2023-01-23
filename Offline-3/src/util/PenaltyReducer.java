@@ -6,7 +6,8 @@ import java.util.Random;
 
 public class PenaltyReducer
 {
-    private static final int MIN_RUN = 5000;
+    private static final int MIN_RUN_KEMPE = 1000;
+    private static final int MIN_RUN_PAIR_SWAP = 10000;
     private static final int SEED = 5;
     Random random;
 
@@ -22,7 +23,7 @@ public class PenaltyReducer
     }
     public void kempeChain()
     {
-        for(int i=0; i<MIN_RUN; i++)
+        for(int i=0; i<MIN_RUN_KEMPE; i++)
             kempeChainUtil();
     }
 
@@ -75,7 +76,7 @@ public class PenaltyReducer
 
     public void pairSwap()
     {
-        for(int i=0; i<MIN_RUN; i++)
+        for(int i=0; i<MIN_RUN_PAIR_SWAP; i++)
             pairSwapUtil();
     }
 
@@ -84,11 +85,8 @@ public class PenaltyReducer
         Course c1 = courses.get(random.nextInt(courses.size()));
         int firstSlot = c1.getTimeSlot();
         ArrayList<Course> adjacentC1 = c1.getAdjacentCourses();
-        int size = adjacentC1.size();
-        if(size == 0)
-            return;
 
-        Course c2 = adjacentC1.get(random.nextInt(size));
+        Course c2 = courses.get(random.nextInt(courses.size()));
         int secondSlot = c2.getTimeSlot();
         ArrayList<Course> adjacentC2 = c2.getAdjacentCourses();
 

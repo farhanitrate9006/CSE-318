@@ -15,7 +15,7 @@ import java.util.Scanner;
 public class Main
 {
     private static final String PATH_TO_DATASET = "dataset";
-    private static final int PENALTY_TYPE = 1;
+    private static final int PENALTY_TYPE = 2;
     private static final ArrayList<Course> courses = new ArrayList<>();
     private static final ArrayList<Student> students = new ArrayList<>();
     private static final String[] FILE_NAMES = {"car-f-92", "car-s-91", "kfu-s-93", "tre-s-92", "yor-f-83"};
