@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class PenaltyCalculator
 {
-    private final int penaltyType;
+    private final int penaltyType; // 1: exp 2: linear
     private final ArrayList<Student> students;
 
     public PenaltyCalculator(int penaltyType, ArrayList<Student> students)

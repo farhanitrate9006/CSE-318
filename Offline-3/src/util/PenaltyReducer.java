@@ -45,6 +45,7 @@ public class PenaltyReducer
         if(changedPenalty > penalty)
             kempeChainSlotSwap(currentSlot, neighbourSlot);
 
+        // resetting
         for(Course course : courses)
             if(course.getDfsStatus() == 2)
                 course.setDfsStatus(0);
@@ -100,10 +101,11 @@ public class PenaltyReducer
 
         double penalty = pc.avgPenalty();
 
+        // applying pair swap
         c1.setTimeSlot(secondSlot);
         c2.setTimeSlot(firstSlot);
         double changedPenalty = pc.avgPenalty();
-        if(changedPenalty > penalty)
+        if(changedPenalty > penalty) // reverting pair swap
         {
             c1.setTimeSlot(firstSlot);
             c2.setTimeSlot(secondSlot);

@@ -11,7 +11,7 @@ import java.util.Random;
 public class Heuristic
 {
     private final int heuristicType;
-    private ArrayList<Course> courses;
+    private final ArrayList<Course> courses;
     private int indexToReturn;
     private static final int SEED = 5;
 
@@ -62,8 +62,8 @@ public class Heuristic
                         (saturationDegree == maxSaturationDegree && unassignedDegree > maxUnassignedDegree)))
             {
                 courseToReturn = course;
-                maxSaturationDegree = course.getSaturationDegree();
-                maxUnassignedDegree = course.getUnassignedNeighbourDegree();
+                maxSaturationDegree = saturationDegree;
+                maxUnassignedDegree = unassignedDegree;
             }
         }
 
