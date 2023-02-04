@@ -25,8 +25,9 @@ public class Main
 
     public static void main(String[] args) throws IOException
     {
-        for(String FILE_TO_PROCESS : FILE_NAMES)
+        for(int i = 4; i < FILE_NAMES.length; i++)
         {
+            String FILE_TO_PROCESS = FILE_NAMES[i];
             System.out.println("===== " + FILE_TO_PROCESS + " =====");
 
             processCourseFile(FILE_TO_PROCESS);
@@ -36,7 +37,8 @@ public class Main
             PenaltyReducer pr = new PenaltyReducer(courses, pc);
 
             // Calling time table solver and penalty reducer
-            for (int j = 1; j <= HEURISTICS.length; j++) {
+            for(int j = 1; j <= HEURISTICS.length; j++)
+            {
                 System.out.println("=== For " + HEURISTICS[j - 1] + " ===");
                 System.out.println("Slots: " + new Solver(j, courses).findTimeTable());
                 System.out.printf("penalty: %.4f", pc.avgPenalty());
