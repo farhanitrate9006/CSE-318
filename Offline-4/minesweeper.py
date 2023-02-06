@@ -61,18 +61,18 @@ class Minesweeper():
         # Keep count of nearby mines
         count = 0
 
-        # Loop over all cells within one row and column
-        for i in range(cell[0] - 1, cell[0] + 2):
-            for j in range(cell[1] - 1, cell[1] + 2):
+        # Loop over all cells except diagonals within one row and column
+        neighbourHeight = [cell[0] - 1, cell[0] + 1]
+        for height in neighbourHeight:
+            if 0 <= height < self.height:
+                if self.board[height][cell[1]]:
+                    count += 1
 
-                # Ignore the cell itself
-                if (i, j) == cell:
-                    continue
-
-                # Update count if cell in bounds and is mine
-                if 0 <= i < self.height and 0 <= j < self.width:
-                    if self.board[i][j]:
-                        count += 1
+        neighbourWidth = [cell[1] - 1, cell[1] + 1]
+        for width in neighbourWidth:
+            if 0 <= width < self.width:
+                if self.board[cell[0]][width]:
+                    count += 1
 
         return count
 
@@ -188,8 +188,95 @@ class MinesweeperAI():
             5) add any new sentences to the AI's knowledge base
                if they can be inferred from existing knowledge
         """
+        # Part-1 #
         self.moves_made.add(cell)
+        # Part-2 #
         self.mark_safe(cell)
+
+        # Part-3 #
+        undeterminedCells = set()
+        mineCount = 0
+
+        # for up and down neighbour
+        neighbourHeight = [cell[0] - 1, cell[0] + 1]
+        for height in neighbourHeight:
+            # ignoring already determined cells #
+            if (height, cell[1]) in self.safes:
+                continue
+            if (height, cell[1]) in self.mines:
+                mineCount += 1
+                continue
+
+            # adding cell as undetermined if it is in range
+            if 0 <= height < self.height:
+                undeterminedCells.add((height, cell[1]))
+
+        # for left and right neighbour
+        neighbourWidth = [cell[1] - 1, cell[1] + 1]
+        for width in neighbourWidth:
+            # ignoring already determined cells #
+            if (cell[0], width) in self.safes:
+                continue
+            if (cell[0], width) in self.mines:
+                mineCount += 1
+                continue
+
+            # adding cell as undetermined if it is in range
+            if 0 <= width < self.width:
+                undeterminedCells.add((cell[0], width))
+
+        newSentence = Sentence(undeterminedCells, count - mineCount)
+        self.knowledge.append(newSentence)
+
+        # for sentence in self.knowledge:
+        #     if sentence.known_safes():
+        #         for cell in sentence.known_safes().copy():
+        #             self.mark_safe(cell)
+        #     if sentence.known_mines():
+        #         for cell in sentence.known_mines().copy():
+        #             self.mark_mine(cell)
+
+        # Part 4-5 #
+        knowledge_changed = True
+
+        # this loop will iterate as long as we are getting new information
+        while knowledge_changed:
+            knowledge_changed = False
+
+            # mark any additional cells as safe or as mine
+            for sentence in self.knowledge:
+                if sentence.known_safes():
+                    knowledge_changed = True
+                    for cell in sentence.known_safes().copy():
+                        self.mark_safe(cell)
+                if sentence.known_mines():
+                    knowledge_changed = True
+                    for cell in sentence.known_mines().copy():
+                        self.mark_mine(cell)
+
+            # try to infer new sentences from the current ones
+            for sentence_1 in self.knowledge:
+                for sentence_2 in self.knowledge:
+
+                    # Ignore when sentences are identical
+                    if sentence_1.cells == sentence_2.cells:
+                        continue
+
+                    # Create a new sentence if 1 is subset of 2, and not in KB
+                    if sentence_1.cells.issubset(sentence_2.cells):
+                        new_sentence_cells = sentence_2.cells - sentence_1.cells
+                        new_sentence_count = sentence_2.count - sentence_1.count
+                        new_sentence = Sentence(new_sentence_cells, new_sentence_count)
+
+                        # Add to knowledge if not already in KB
+                        if new_sentence not in self.knowledge:
+                            knowledge_changed = True
+                            self.knowledge.append(new_sentence)
+
+        # Print out AI current knowledge to terminal
+        print('Known Mines: ', self.mines)
+        print('Safe Moves Remaining: ', self.safes - self.moves_made)
+        print('========================')
 
     def make_safe_move(self):
         """
